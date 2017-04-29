@@ -9,6 +9,7 @@ class PerspectiveTransform(ProcessStep):
 		super().__init__()
 		print('PerspectiveTransform object created ...')
 		self.image = None
+		self.data = None
 
 		if (perspective == None):
 			"""
@@ -62,6 +63,7 @@ class PerspectiveTransform(ProcessStep):
 		return warped
 
 	def process(self, data):
+		self.data = data
 		image = data['image']
 		self.image = self.warp(image, self.src, self.dst)
 		data['image'] = self.image

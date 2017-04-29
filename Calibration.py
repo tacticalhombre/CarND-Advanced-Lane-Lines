@@ -29,6 +29,7 @@ class Calibrate(ProcessStep):
 		self.dist = None
 
 		self.gray = None
+		self.data = None
 
 	# Creates object points, and image points
 	# nx - the number of inside corners in x
@@ -100,6 +101,7 @@ class Calibrate(ProcessStep):
 		return undistorted
 
 	def process(self, data):
+		self.data = data
 		image = data['image']
 		orig = image.copy()
 		self.image = self.cal_undistort(image)

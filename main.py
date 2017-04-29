@@ -77,16 +77,22 @@ class Pipeline(ProcessStep):
 		return image
 
 	def process_image(self, image):
+		self.data['frame_num'] = self.frame_num
 
 		if (self.debug):
 
 			if (self.data['filetype'] == 'mp4'):
-				debug_frame = self.data['debug_frame']
+				debug_frame = None
+				if ('debug_frame' in self.data.keys()):
+					debug_frame = self.data['debug_frame']
 
-				if (self.frame_num == debug_frame):
-					self.image = self.invoke_steps(image)
+				if (debug_frame != None):
+					if (self.frame_num == debug_frame):
+						self.image = self.invoke_steps(image)
+					else:
+						self.image = image
 				else:
-					self.image = image
+					self.image = self.invoke_steps(image)
 			else:
 				self.image = self.invoke_steps(image)
 

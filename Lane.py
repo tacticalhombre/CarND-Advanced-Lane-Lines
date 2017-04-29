@@ -16,6 +16,7 @@ class Lane(ProcessStep):
 		self.line = Line()
 		self.binary_warped = None
 		self.image = None
+		self.data = None
 	
 	def get_curvature(self, data):
 
@@ -49,7 +50,8 @@ class Lane(ProcessStep):
 		lane_center = (leftx[y_eval] + rightx[y_eval])/2
 
 		image = data['image']
-		camera_position = image.shape[0]/2
+		camera_position = image.shape[1]/2
+		#print('camera_position:', camera_position, ' image shape',image.shape)
 
 		center_offset_pixels = abs(camera_position - lane_center)
 		#print('center_offset_pixels:', center_offset_pixels, ' in meters:', center_offset_pixels*xm_per_pix)
@@ -90,6 +92,7 @@ class Lane(ProcessStep):
 		return result
 
 	def process(self, data):
+		self.data = data
 		lines = data['lines']
 		self.binary_warped = data['image']
 

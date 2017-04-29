@@ -20,7 +20,7 @@ class ProcessStep():
 	def visualize(self, data):
 		vis_image = data['image']
 
-		plt.imsave("./output_images/vis-" + type(self).__name__ + self.get_suffix() + '.jpg', vis_image)
+		plt.imsave("./output_images/vis-" + type(self).__name__ + self.get_suffix() + '-F' + str(self.data['frame_num']) + '.png', vis_image)
 
 	
 		

@@ -2,6 +2,8 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from skimage import io, color
+
 
 class Thresholds():
 
@@ -14,8 +16,14 @@ class Thresholds():
         thresh_max = thresh[1]
 
         # Convert to grayscale
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        #gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         
+        #bt = self.hls_select(image, (90, 255))
+        #gray = cv2.bitwise_and(image, image, mask = bt).astype(np.uint8)    
+        hls = cv2.cvtColor(image, cv2.COLOR_RGB2HLS)
+        s_channel = hls[:,:,2]
+        gray = s_channel
+
         # Apply x or y gradient with the OpenCV Sobel() function
         # and take the absolute value
         if orient == 'x':
@@ -82,11 +90,25 @@ class Thresholds():
         binary_output[(s_channel > thresh[0]) & (s_channel <= thresh[1])] = 1
         return binary_output
 
+    def cielab_select(self, image, thresh=(0, 255)):
+        lab = cv2.cvtColor(image, cv2.COLOR_RGB2LAB)
+        b = lab[:,:,2]
+        binary_output = np.zeros_like(b)
+        binary_output[(b > thresh[0]) & (b <= thresh[1])] = 1
+
+        return binary_output
+
+    def cieluv_select(self, image, thresh=(0, 255)):
+        luv = cv2.cvtColor(image, cv2.COLOR_RGB2LUV)
+        l = luv[:,:,0]
+        binary_output = np.zeros_like(l)
+        binary_output[(l > thresh[0]) & (l <= thresh[1])] = 1
+
+        return binary_output
+
     def h_select(self, image):
 
         hls = cv2.cvtColor(image, cv2.COLOR_RGB2HLS)
-        #hls = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-        
         
         # create NumPy arrays from the boundaries
         lower = np.array([ 20, 120, 80], dtype = "uint8")
@@ -95,9 +117,6 @@ class Thresholds():
         # find the colors within the specified boundaries and apply
         # the mask
         mask = cv2.inRange(hls, lower, upper)
-        #output = cv2.bitwise_and(image, image, mask = mask).astype(np.uint8)    
-        
-        #mask = output_bin
         
         return mask
 

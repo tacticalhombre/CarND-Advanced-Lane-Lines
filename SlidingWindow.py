@@ -16,6 +16,7 @@ class SlidingWindow(ProcessStep):
 		self.out_img = None
 		self.histogram = None
 		self.debug = False
+		self.data = None
 
 	def get_line(self):
 		return self.line
@@ -126,7 +127,7 @@ class SlidingWindow(ProcessStep):
 			plt.plot(right_fitx, ploty, color='yellow')
 			plt.xlim(0, 1280)
 			plt.ylim(720, 0)
-			f.savefig('./output_images/vis-' + type(self).__name__ + '-fitline.png')
+			f.savefig('./output_images/vis-' + type(self).__name__ + '-F' + str(self.data['frame_num']) + '-fitline.png')
 
 		self.out_img = out_img
 		
@@ -143,7 +144,7 @@ class SlidingWindow(ProcessStep):
 		plt.plot(self.histogram)
 		ax2.set_title('Histogram', fontsize=25)
 		plt.subplots_adjust(left=0., right=1, top=0.9, bottom=0.)
-		f.savefig('./output_images/vis-' + type(self).__name__ + '-histogram.png')		
+		f.savefig('./output_images/vis-' + type(self).__name__ + '-F' + str(self.data['frame_num']) + '-histogram.png')		
 
 		left_fit = lines[0]
 		right_fit = lines[1]
@@ -158,13 +159,14 @@ class SlidingWindow(ProcessStep):
 		nonzeroy = np.array(nonzero[0])
 		nonzerox = np.array(nonzero[1])
 
+		"""
 		f, ax = plt.subplots()
 		plt.plot(left_fitx, ploty, color='yellow')
 		plt.plot(right_fitx, ploty, color='yellow')
 		plt.xlim(0, 1280)
 		plt.ylim(720, 0)
-		f.savefig('./output_images/vis-' + type(self).__name__ + '-fit.png')	
-
+		f.savefig('./output_images/vis-' + type(self).__name__ + '-F' + str(self.data['frame_num']) + '-fit.png')	
+		"""
 	
 	def visualize(self, data):
 		super(SlidingWindow, self).visualize(data)
@@ -174,17 +176,18 @@ class SlidingWindow(ProcessStep):
 
 
 	def process(self, data):
+		self.data = data
 		self.debug = data['debug']
 
 		if (not data['line'].detected):
-			#print('Finding windows ...')
+			print('Finding windows ...')
 			image = data['image']
 			lines = self.find_lines(image)
 			data['lines'] = lines
 			#self.image = self.draw_lines(lines)
 			#self.image = self.vis(lines)
 			self.image = self.out_img
-			#plt.show()
+			
 			data['line'].detected = True
 
 			lineobj = data['line']
@@ -199,6 +202,7 @@ class SlidingWindow(ProcessStep):
 			lineobj.lastn_left = x0
 			lineobj.lastn_right = x1
 
-
+			print(type(self).__name__ + ' - ' + str(data['frame_num']), ' lines: ', data['lines'])
+		
 		return data
 

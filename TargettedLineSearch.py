@@ -14,6 +14,7 @@ class TargettedLineSearch(ProcessStep):
 		self.image = None
 		self.out_img = None
 		self.debug = False
+		self.data = None
 
 	def search(self, binary_warped, data):
 		self.binary_warped = binary_warped
@@ -93,12 +94,13 @@ class TargettedLineSearch(ProcessStep):
 		plt.plot(right_fitx, ploty, color='yellow')
 		plt.xlim(0, 1280)
 		plt.ylim(720, 0)
-		f.savefig('./output_images/vis-' + type(self).__name__ + '-fitline.png')
+		f.savefig('./output_images/vis-' + type(self).__name__ + '-F' + str(self.data['frame_num']) +'-fitline.png')
 
 		return result
 
 	def process(self, data):
 		self.debug = data['debug']
+		self.data = data
 
 		if ('line' in data.keys()):
 			#print('targetted line search')
@@ -143,5 +145,8 @@ class TargettedLineSearch(ProcessStep):
 				self.image = self.vis(newlines)
 
 			data['lines'] = (lineobj.best_fit_left, lineobj.best_fit_right)
+
+		print()
+		print(type(self).__name__ + ' - ' + str(data['frame_num']), ' lines: ', data['lines'])
 		
 		return data
